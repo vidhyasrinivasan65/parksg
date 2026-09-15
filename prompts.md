@@ -71,10 +71,9 @@ GUARDRAILS: No external API calls. No npm packages. No map library. No routing l
 **Came back with:** a working screen, four zone buttons, a TEST STATE dropdown for
 flipping between loading / empty / refused / unreachable / success, and mock carparks.
 
-**Action:** kept it.
 
 **Why I did it this way:** deciding the JSON contract before either half existed meant
-the back end had one job — produce that shape — and connecting them was a four-line
+the back end had one job — produce that shape and connecting them was a four-line
 change instead of a rebuild. It also meant I could build and test the whole front end
 while waiting for my LTA key to arrive by email.
 
@@ -107,7 +106,7 @@ a perfectly good key and waited on an email for no reason.
 **Lesson:** the error told me the truth about what LTA saw, and nothing about why. The
 failure was on my machine, one layer before the request.
 
-### Discovery 2 — CarParkID is not unique, and the duplicate is dangerous
+### Discovery 2 CarParkID is not unique and the duplicate is dangerous
 
 In the real response, A0007 appears twice:
 
