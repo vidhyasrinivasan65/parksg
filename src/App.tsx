@@ -103,8 +103,8 @@ export default function App() {
         className="w-full max-w-md bg-white sm:rounded-3xl sm:shadow-xl sm:border sm:border-slate-200/80 min-h-screen sm:min-h-[840px] flex flex-col justify-between overflow-hidden"
       >
         <div>
-          {/* Header with logo, SG Live badge, and Test State switcher */}
-          <Header testState={appState} onStateChange={handleStateChange} />
+          {/* Header with logo and SG Live badge */}
+          <Header />
 
           {/* Controls & Main Content Area */}
           <main className="px-5 py-4 flex flex-col">
@@ -131,6 +131,28 @@ export default function App() {
                   ))}
                 </ul>
               )}
+            </div>
+
+            {/* Demo: simulate failure states */}
+            <div className="mt-6 pt-3 border-t border-slate-100 flex items-center justify-between gap-2">
+              <label
+                htmlFor="state-selector"
+                className="text-[11px] text-slate-400 font-normal"
+              >
+                Demo: simulate failure states
+              </label>
+              <select
+                id="state-selector"
+                value={appState}
+                onChange={(e) => handleStateChange(e.target.value as AppState)}
+                className="text-[11px] text-slate-500 bg-slate-50 border border-slate-200 rounded px-2 py-1 focus:outline-none focus:ring-1 focus:ring-slate-300 cursor-pointer"
+              >
+                <option value="success">Normal (Success)</option>
+                <option value="loading">loading</option>
+                <option value="empty">empty</option>
+                <option value="refused">refused</option>
+                <option value="unreachable">unreachable</option>
+              </select>
             </div>
           </main>
         </div>
