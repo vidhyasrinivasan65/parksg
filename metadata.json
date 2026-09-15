@@ -1,0 +1,6 @@
+{
+  "name": "ParkSG",
+  "description": "Live parking lot availability across Singapore's busiest shopping and commercial zones.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
