@@ -6,8 +6,8 @@
 **Health:** https://parksg-seven.vercel.app/api/health
 
 **What it does:** shows live available car parking lots across HDB, LTA and URA
-carparks in four of Singapore's busiest zones — Orchard, Marina, HarbourFront and
-Jurong Lake District — sorted emptiest first, so a driver can decide whether it is
+carparks in four of Singapore's busiest zones namely Orchard, Marina, HarbourFront and
+Jurong Lake District which is sorted as emptiest first, so a driver can decide whether it is
 worth driving there.
 
 **Source:** LTA DataMall `CarParkAvailabilityv2`, updated every minute, fetched
@@ -15,7 +15,7 @@ server-side through `/api/carparks` so the credential never reaches the browser.
 
 
 
-# Part A — Criteria I set for myself
+# Part A - Criteria I set for myself
 
 ## Front end
 
@@ -31,7 +31,7 @@ The one job is "which carpark near me has space." Four zone buttons sit above th
 **F3. Every number on screen is one I can trace to a source.**
 This product's entire value is that the number is true. A plausible fake is worse than
 nothing, because the user drives there.
-*Test:* pick any carpark on screen, call `/api/carparks?zone=X`, and match it.
+*Test:* pick any carpark on screen, call `/api/carparks?zone=X` and match it.
 
 **F4. A full carpark reads as FULL, not as 0.**
 At 8pm in Orchard most of the list is zero. A column of `0` scans as a broken app.
@@ -91,28 +91,28 @@ wrong row tells a driver a carpark is full when it has hundreds of car spaces.
 | **B5** | Met | `s-maxage=60, stale-while-revalidate=120`. |
 | **B6** | Met | Every returned `id` ends `-C`. Ids are `${CarParkID}-${LotType}` because `CarParkID` alone is not unique. |
 
-## F5 — partly met, and why
+## F5 — partly met and why
 
 **Unreachable is genuinely verified.** With Airplane Mode on, tapping a zone produced
 the sentence rather than a spinner. Screenshot attached.
 
 One caveat I should state rather than let pass: the demo selector was also set to
 `unreachable` in that screenshot, so it does not fully isolate the real code path from
-the simulated one. I am confident the real path fired — the timestamp updated to 22:00
+the simulated one. I am confident the real path fired; the timestamp updated to 22:00
 when the page re-ran — but the screenshot alone does not prove it.
 
 **Empty has no real-world trigger.** It means the call succeeded and returned zero
 carparks. With four fixed zones that always contain carparks, this cannot occur in
-production. I verified it by simulation only, and I am recording that as an untested
+production. I verified it by simulation only and I am recording that as an untested
 path rather than a passing one.
 
 **Refused is untested against a real refusal.** I have never seen LTA return a non-2xx
 to my deployed function. The handling exists in code and has never run.
 
-**So two of my four states have been proven and two have only been simulated.** Marking
+So two of my four states have been proven and two have only been simulated. Marking
 F5 as "met" would have been the easy thing and would not have survived anyone checking.
 
-## One more thing I should flag
+One more thing I should flag:-
 
 The demo selector is still on the page. I moved it below the carpark list and relabelled
 it, and I left it deliberately so the failure states can be inspected without waiting
@@ -124,10 +124,10 @@ F1 says it undercuts "a stranger can tell what this is for."
 
 # Part C — The six questions
 
-## Q1. Where did the AI make me faster, and by how much?
+## Q1. Where did the AI make me faster and by how much?
 
-The front end. A four-zone interface with five distinct states, card layout and colour
-logic arrived in minutes from one prompt. By hand that was most of a day, and probably
+The front end for sure according to me. A four-zone interface with five distinct states, card layout and colour
+logic arrived in minutes from one prompt. By hand that was most of a day and probably
 a worse-looking day.
 
 More useful than the speed was what it let me do with the time: because the screen
@@ -138,14 +138,14 @@ But some of it was slower. Setting the Vercel environment variable took four cli
 hand; getting a model to talk me through it took longer than doing it. Anything
 involving a form or a toggle was faster by hand.
 
-## Q2. Where did it cost me time, and whose fault was it?
+## Q2. Where did it cost me time and whose fault was it?
 
-The 401. Twenty minutes convinced my key was wrong, when PowerShell had eaten part of
-it before the request left my machine — `$` inside double quotes is a variable, so my
+The 401 error occupied the most time in my work. Twenty minutes convinced my key was wrong, when PowerShell had eaten part of
+it before the request left my machine,`$` inside double quotes is a variable, so my
 key arrived truncated and LTA correctly rejected it.
 
 **Whose fault:** mine, but not in the way "user error" usually means. My instruction was
-complete and the tool did exactly what I typed. The problem was that the *error message*
+complete and the tool did exactly what I typed. The problem was that the error message
 described LTA's view of the request, and the fault was one layer earlier, on my own
 machine. No amount of better prompting would have surfaced that. The fix came from
 someone suggesting a cause the error had given no evidence for.
@@ -155,8 +155,7 @@ had never seen it. That one was genuinely a gap in my knowledge, not a tooling p
 
 ## Q3. Did it hand me something that looked right and wasn't?
 
-Yes, and it is the answer I would fail myself on if I had shipped it.
-
+Yes,
 The same `CarParkID` appears twice in LTA's feed with different `LotType` values —
 "C" for cars, "Y" for motorcycles. Angullia Park comes back as both `Y: 0` and
 `C: 224`. Without filtering, ParkSG would have displayed **"ANGULLIA PARK — FULL"** to
@@ -167,7 +166,7 @@ rendered beautifully and lied about the one thing it exists to tell you.
 
 **How I found out:** only because I called the endpoint by hand and the raw response
 was sitting in front of me. A prompt written from my assumptions about how a carpark
-API works would never have mentioned `LotType`, and the generated code would have been
+API works would never have mentioned `LotType` and the generated code would have been
 clean, readable and wrong.
 
 **The part I am less comfortable with:** I ran the command and I read the output. But
@@ -218,7 +217,7 @@ looking like a technical detail.
 ## Q6. Scale it to thirty people.
 
 Thirty people each holding their own boundary, none able to see the others', is not
-thirty times my weekend — it is a situation where my `LotType` bug ships, because the
+thirty times my weekend, it is a situation where my `LotType` bug ships, because the
 person who would have caught it is looking at their own screen.
 
 The specific danger is that the failure is invisible. My app would have passed every
@@ -233,7 +232,8 @@ nobody asked about. Midweek, not Friday, because by Friday the code is written a
 everyone is defending a design rather than reading data.
 
 **What I would never let an AI settle:** what the product claims to be true. Not how it
-fetches, not how it renders — what it *asserts*. "This carpark has 224 spaces" is a
+fetches, not how it renders; 
+what it *asserts*. "This carpark has 224 spaces" is a
 claim my organisation is making to a driver, and a model producing a plausible number
 is not the same thing as someone deciding the claim is true.
 
