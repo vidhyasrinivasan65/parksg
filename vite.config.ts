@@ -15,37 +15,7 @@ function apiMiddlewarePlugin(): Plugin {
         if (url.startsWith('/api/carparks')) {
           try {
             const { default: handler } = await import('./api/carparks.js');
-            return await (handler as (q: unknown, s: unknown) => Promise<unknown>)(req, res);
-          } catch (err: unknown) {
-            res.statusCode = 500;
-            res.setHeader('Content-Type', 'application/json');
-            return res.end(JSON.stringify({ error: (err as Error)?.message || 'Server error' }));
-          }
-        }
-        if (url.startsWith('/api/geocode')) {
-          try {
-            const { default: handler } = await import('./api/geocode.js');
-            return await (handler as (q: unknown, s: unknown) => Promise<unknown>)(req, res);
-          } catch (err: unknown) {
-            res.statusCode = 500;
-            res.setHeader('Content-Type', 'application/json');
-            return res.end(JSON.stringify({ error: (err as Error)?.message || 'Server error' }));
-          }
-        }
-        if (url.startsWith('/api/routes')) {
-          try {
-            const { default: handler } = await import('./api/routes.js');
-            return await (handler as (q: unknown, s: unknown) => Promise<unknown>)(req, res);
-          } catch (err: unknown) {
-            res.statusCode = 500;
-            res.setHeader('Content-Type', 'application/json');
-            return res.end(JSON.stringify({ error: (err as Error)?.message || 'Server error' }));
-          }
-        }
-        if (url.startsWith('/api/insights')) {
-          try {
-            const { default: handler } = await import('./api/insights.js');
-            return await (handler as (q: unknown, s: unknown) => Promise<unknown>)(req, res);
+            return await handler(req, res);
           } catch (err: unknown) {
             res.statusCode = 500;
             res.setHeader('Content-Type', 'application/json');
@@ -55,7 +25,7 @@ function apiMiddlewarePlugin(): Plugin {
         if (url.startsWith('/api/health')) {
           try {
             const { default: handler } = await import('./api/health.js');
-            return await (handler as (q: unknown, s: unknown) => Promise<unknown>)(req, res);
+            return await handler(req, res);
           } catch (err: unknown) {
             res.statusCode = 500;
             res.setHeader('Content-Type', 'application/json');

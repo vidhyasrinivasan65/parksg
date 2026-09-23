@@ -1,26 +1,10 @@
 import { ZoneCode, ZoneData, ZoneInfo } from '../types.ts';
 
 export const ZONE_MAPPING: Record<string, ZoneInfo> = {
-  Orchard: {
-    label: 'Orchard',
-    value: 'Orchard',
-    center: { lat: 1.3048, lng: 103.8318 },
-  },
-  Marina: {
-    label: 'Marina',
-    value: 'Marina',
-    center: { lat: 1.2903, lng: 103.857 },
-  },
-  HarbourFront: {
-    label: 'HarbourFront',
-    value: 'Harbfront',
-    center: { lat: 1.2653, lng: 103.822 },
-  },
-  'Jurong Lake District': {
-    label: 'Jurong Lake District',
-    value: 'JurongLakeDistrict',
-    center: { lat: 1.3329, lng: 103.7436 },
-  },
+  Orchard: { label: 'Orchard', value: 'Orchard' },
+  Marina: { label: 'Marina', value: 'Marina' },
+  HarbourFront: { label: 'HarbourFront', value: 'Harbfront' },
+  'Jurong Lake District': { label: 'Jurong Lake District', value: 'JurongLakeDistrict' },
 };
 
 export const ZONES_LIST: ZoneInfo[] = [
@@ -34,7 +18,6 @@ export const MOCK_DATA_STORE: Record<ZoneCode, ZoneData> = {
   Orchard: {
     fetchedAt: '2025-02-23T14:32:10+08:00',
     zone: 'Orchard',
-    center: { lat: 1.3048, lng: 103.8318 },
     count: 9,
     carparks: [
       { id: 'ORC_ION', name: 'ION Orchard', agency: 'LTA', lots: 142, lat: 1.3039, lng: 103.8318 },
@@ -51,7 +34,6 @@ export const MOCK_DATA_STORE: Record<ZoneCode, ZoneData> = {
   Marina: {
     fetchedAt: '2025-02-23T14:32:10+08:00',
     zone: 'Marina',
-    center: { lat: 1.2903, lng: 103.857 },
     count: 5,
     carparks: [
       { id: 'MAR_MBS', name: 'Marina Bay Sands', agency: 'LTA', lots: 215, lat: 1.2834, lng: 103.8607 },
@@ -64,7 +46,6 @@ export const MOCK_DATA_STORE: Record<ZoneCode, ZoneData> = {
   Harbfront: {
     fetchedAt: '2025-02-23T14:32:10+08:00',
     zone: 'Harbfront',
-    center: { lat: 1.2653, lng: 103.822 },
     count: 3,
     carparks: [
       { id: 'HBF_VIV', name: 'VivoCity', agency: 'LTA', lots: 160, lat: 1.2644, lng: 103.8222 },
@@ -75,13 +56,26 @@ export const MOCK_DATA_STORE: Record<ZoneCode, ZoneData> = {
   JurongLakeDistrict: {
     fetchedAt: '2025-02-23T14:32:10+08:00',
     zone: 'JurongLakeDistrict',
-    center: { lat: 1.3329, lng: 103.7436 },
     count: 4,
     carparks: [
-      { id: 'JLD_JEM', name: 'Jem', agency: 'LTA', lots: 110, lat: 1.3332, lng: 103.7431 },
-      { id: 'JLD_WES', name: 'Westgate', agency: 'URA', lots: 75, lat: 1.3344, lng: 103.7428 },
-      { id: 'JLD_IMM', name: 'IMM Building', agency: 'LTA', lots: 35, lat: 1.3351, lng: 103.7468 },
-      { id: 'JLD_JCU', name: 'JCube (Former)', agency: 'URA', lots: 0, lat: null, lng: null },
+      { id: 'JLD_JEM', name: 'Jem Mall', agency: 'LTA', lots: 110, lat: 1.3331, lng: 103.7436 },
+      { id: 'JLD_WES', name: 'Westgate', agency: 'URA', lots: 67, lat: 1.3338, lng: 103.7428 },
+      { id: 'JLD_IMM', name: 'IMM Building', agency: 'HDB', lots: 22, lat: 1.3349, lng: 103.7468 },
+      { id: 'JLD_JCB', name: 'JCube Site Carpark', agency: 'LTA', lots: 0, lat: null, lng: null },
     ],
   },
 };
+
+/**
+ * Requirement: Single data-fetching function.
+ * Returns the mock after a 600ms delay.
+ */
+export async function loadCarparks(zone: ZoneCode | string): Promise<ZoneData> {
+  // SWAP POINT — this becomes fetch(`/api/carparks?zone=${zone}`)
+  return new Promise((resolve) => {
+    setTimeout(() => {
+      const data = (MOCK_DATA_STORE as Record<string, ZoneData>)[zone] || MOCK_DATA_STORE['Orchard'];
+      resolve(data);
+    }, 600);
+  });
+}
