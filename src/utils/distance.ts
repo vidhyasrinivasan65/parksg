@@ -32,7 +32,8 @@ export function formatDistance(meters: number): string {
     const rounded = Math.max(50, Math.round(meters / 50) * 50);
     return `${rounded} m`;
   }
-  return `${(meters / 1000).toFixed(1)} km`;
+  const km = Math.round(meters / 100) / 10;
+  return `${km.toFixed(1)} km`;
 }
 
 export interface NearbyAlternativeResult {

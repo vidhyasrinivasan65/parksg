@@ -3,6 +3,9 @@ import path from 'path';
 import dotenv from 'dotenv';
 import { createServer as createViteServer } from 'vite';
 import carparksHandler from './api/carparks.js';
+import geocodeHandler from './api/geocode.js';
+import routesHandler from './api/routes.js';
+import insightsHandler from './api/insights.js';
 import healthHandler from './api/health.js';
 
 dotenv.config();
@@ -11,12 +14,48 @@ async function startServer() {
   const app = express();
   const PORT = 3000;
 
+  // JSON parsing middleware
+  app.use(express.json());
+
   // API routes FIRST
   app.get('/api/carparks', async (req, res) => {
     try {
       await carparksHandler(req, res);
     } catch (err) {
       console.error('API Error in /api/carparks:', err);
+      if (!res.headersSent) {
+        res.status(500).json({ error: 'Internal Server Error' });
+      }
+    }
+  });
+
+  app.get('/api/geocode', async (req, res) => {
+    try {
+      await geocodeHandler(req, res);
+    } catch (err) {
+      console.error('API Error in /api/geocode:', err);
+      if (!res.headersSent) {
+        res.status(500).json({ error: 'Internal Server Error' });
+      }
+    }
+  });
+
+  app.get('/api/routes', async (req, res) => {
+    try {
+      await routesHandler(req, res);
+    } catch (err) {
+      console.error('API Error in /api/routes:', err);
+      if (!res.headersSent) {
+        res.status(500).json({ error: 'Internal Server Error' });
+      }
+    }
+  });
+
+  app.get('/api/insights', async (req, res) => {
+    try {
+      await insightsHandler(req, res);
+    } catch (err) {
+      console.error('API Error in /api/insights:', err);
       if (!res.headersSent) {
         res.status(500).json({ error: 'Internal Server Error' });
       }

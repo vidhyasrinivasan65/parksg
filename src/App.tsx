@@ -1,7 +1,8 @@
-import React, { useCallback, useEffect, useRef, useState } from 'react';
-import { AlertTriangle, Loader2, RefreshCw, X } from 'lucide-react';
+import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import { AlertTriangle, Loader2, RefreshCw, Search, X } from 'lucide-react';
 import { CarparkCard } from './components/CarparkCard.tsx';
 import { Header } from './components/Header.tsx';
+import { SearchBar } from './components/SearchBar.tsx';
 import { StateViews } from './components/StateViews.tsx';
 import { ZoneSelector } from './components/ZoneSelector.tsx';
 import { loadCarparks as fetchMockCarparks, ZONE_MAPPING, ZONES_LIST } from './data/mockCarparks.ts';
@@ -46,6 +47,7 @@ export default function App() {
   const [appState, setAppState] = useState<AppState>('success');
   const [selectedZone, setSelectedZone] = useState<ZoneCode>('Orchard');
   const [carparks, setCarparks] = useState<Carpark[]>([]);
+  const [searchQuery, setSearchQuery] = useState<string>('');
   const [fetchedAt, setFetchedAt] = useState<string>(new Date().toISOString());
   const [isRefreshing, setIsRefreshing] = useState<boolean>(false);
 
@@ -185,6 +187,17 @@ export default function App() {
   const currentZoneInfo = ZONES_LIST.find((z) => z.value === selectedZone) || ZONE_MAPPING['Orchard'];
   const updatedTime = formatSingaporeTime(fetchedAt);
 
+  // Filter carparks by name or ID
+  const filteredCarparks = useMemo(() => {
+    const q = searchQuery.trim().toLowerCase();
+    if (!q) return carparks;
+    return carparks.filter(
+      (cp) =>
+        cp.name.toLowerCase().includes(q) ||
+        cp.id.toLowerCase().includes(q)
+    );
+  }, [carparks, searchQuery]);
+
   return (
     <div className="min-h-screen bg-slate-100 flex flex-col items-center justify-start sm:py-8 sm:px-4">
       {/* Phone container */}
@@ -246,19 +259,52 @@ export default function App() {
               </div>
             )}
 
+            {/* Search bar to filter carparks by name */}
+            {appState === 'success' && carparks.length > 0 && (
+              <SearchBar
+                searchQuery={searchQuery}
+                onSearchChange={setSearchQuery}
+                placeholder={`Search in ${currentZoneInfo.label}...`}
+                totalCount={carparks.length}
+                filteredCount={filteredCarparks.length}
+              />
+            )}
+
             {/* Dynamic Content Area */}
             <div id="main-content" className="flex-1 flex flex-col justify-start">
               {appState !== 'success' ? (
                 <StateViews state={appState} zoneLabel={currentZoneInfo.label} />
               ) : carparks.length === 0 ? (
                 <StateViews state="empty" zoneLabel={currentZoneInfo.label} />
+              ) : filteredCarparks.length === 0 ? (
+                <div
+                  id="no-search-results"
+                  className="flex flex-col items-center justify-center py-12 px-4 text-center bg-slate-50/70 rounded-2xl border border-slate-200/80 my-2 animate-in fade-in duration-150"
+                >
+                  <div className="w-10 h-10 rounded-full bg-slate-200/80 flex items-center justify-center text-slate-500 mb-2.5">
+                    <Search className="w-5 h-5 text-slate-400" />
+                  </div>
+                  <p className="text-xs font-semibold text-slate-800">
+                    No carparks matching &ldquo;{searchQuery}&rdquo;
+                  </p>
+                  <p className="text-[11px] text-slate-500 mt-1 max-w-xs leading-relaxed">
+                    No carparks in {currentZoneInfo.label} match your search. Check for typos or try another name.
+                  </p>
+                  <button
+                    type="button"
+                    onClick={() => setSearchQuery('')}
+                    className="mt-3.5 px-3.5 py-1.5 text-xs font-semibold bg-slate-900 text-white rounded-xl hover:bg-slate-800 transition-colors cursor-pointer shadow-xs active:scale-[0.98]"
+                  >
+                    Clear search filter
+                  </button>
+                </div>
               ) : (
                 <ul
                   id="carparks-list"
                   className="flex flex-col gap-2.5 pb-2"
                   role="list"
                 >
-                  {carparks.map((cp) => (
+                  {filteredCarparks.map((cp) => (
                     <CarparkCard
                       key={cp.id}
                       carpark={cp}
