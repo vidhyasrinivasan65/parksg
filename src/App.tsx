@@ -9,7 +9,7 @@ import { loadCarparks as fetchMockCarparks, ZONE_MAPPING, ZONES_LIST } from './d
 import { AppState, Carpark, ZoneCode, ZoneData } from './types.ts';
 import { STALE_THRESHOLD_MINUTES } from './utils/constants.ts';
 import { recordCarparkReading, seedSimulatedTrend } from './utils/trend.ts';
-
+import DisqusThread from './components/DisqusThread';
 /**
  * Single data-fetching function.
  */
