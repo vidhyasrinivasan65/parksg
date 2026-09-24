@@ -1,6 +1,6 @@
 import { useEffect, useRef } from 'react';
 
-const DISQUS_SHORTNAME = 'PASTE_YOUR_SHORTNAME_HERE';
+const DISQUS_SHORTNAME = 'parksgmbai';
 const PAGE_URL = 'https://parksg-seven.vercel.app';
 const PAGE_IDENTIFIER = 'home';
 
