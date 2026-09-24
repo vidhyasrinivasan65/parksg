@@ -343,7 +343,7 @@ export default function App() {
             </div>
           </main>
         </div>
-
+        <DisqusThread /> 
         {/* Footer */}
         <footer className="px-5 py-4 bg-slate-50 border-t border-slate-100 text-center mt-6">
           <p className="text-xs font-medium text-slate-500">
