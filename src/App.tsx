@@ -345,6 +345,14 @@ export default function App() {
         </div>
         <DisqusThread /> 
         {/* Footer */}
+        <p className="text-xs text-slate-500 mt-2">
+  This site uses Microsoft Clarity and Disqus. Clarity records how pages are used
+  — clicks, scrolls and session replays — to help improve the site. Disqus hosts the
+  comments below. Both collect data about your visit. See the{' '}
+  <a href="https://privacy.microsoft.com/privacystatement" className="underline">Microsoft Privacy Statement</a>,{' '}
+  <a href="https://disqus.com/privacy-policy/" className="underline">Disqus privacy policy</a> and{' '}
+  <a href="https://disqus.com/data-sharing-settings/" className="underline">Disqus data sharing settings</a>.
+</p>
         <footer className="px-5 py-4 bg-slate-50 border-t border-slate-100 text-center mt-6">
           <p className="text-xs font-medium text-slate-500">
             Data from LTA DataMall
