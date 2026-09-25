@@ -37,12 +37,6 @@ export default function DisqusThread() {
 
   return (
     <section className="px-5 py-8 bg-white border-t border-slate-100">
-      <p className="text-sm text-slate-600 mb-4">
-        Tell us what worked for you and what did not.
-      </p>
-      <div id="disqus_thread" />
-      return (
-    <section className="px-5 py-8 bg-white border-t border-slate-100">
       <style>{`
         #disqus_thread a { color: #4f46e5; }
         #disqus_thread { color: #0f172a; }
@@ -52,6 +46,5 @@ export default function DisqusThread() {
       </p>
       <div id="disqus_thread" />
     </section>
-  );
   );
 }
