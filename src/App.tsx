@@ -1,5 +1,5 @@
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
-import { AlertTriangle, Loader2, RefreshCw, Search, X } from 'lucide-react';
+import { AlertTriangle, Info, Loader2, RefreshCw, Search, X } from 'lucide-react';
 import { CarparkCard } from './components/CarparkCard.tsx';
 import { Header } from './components/Header.tsx';
 import { SearchBar } from './components/SearchBar.tsx';
@@ -7,7 +7,7 @@ import { StateViews } from './components/StateViews.tsx';
 import { ZoneSelector } from './components/ZoneSelector.tsx';
 import { loadCarparks as fetchMockCarparks, ZONE_MAPPING, ZONES_LIST } from './data/mockCarparks.ts';
 import { AppState, Carpark, ZoneCode, ZoneData } from './types.ts';
-import { STALE_THRESHOLD_MINUTES } from './utils/constants.ts';
+import { ALMOST_FULL_LOTS_THRESHOLD, STALE_THRESHOLD_MINUTES } from './utils/constants.ts';
 import { recordCarparkReading, seedSimulatedTrend } from './utils/trend.ts';
 import DisqusThread from './components/DisqusThread';
 /**
@@ -268,6 +268,48 @@ export default function App() {
                 totalCount={carparks.length}
                 filteredCount={filteredCarparks.length}
               />
+            )}
+
+            {/*
+              Nothing on the page explained what the number on each card counts, what the
+              agency badges stand for, or where the distances were measured from. It is
+              collapsed by default so it does not add to what is already a long list.
+            */}
+            {appState === 'success' && carparks.length > 0 && (
+              <details
+                id="reading-the-list"
+                className="mb-2.5 rounded-xl border border-slate-200/80 bg-slate-50/70 px-3 py-2"
+              >
+                <summary className="flex items-center gap-1.5 text-[11px] font-semibold text-slate-600 cursor-pointer list-none select-none hover:text-slate-800">
+                  <Info className="w-3.5 h-3.5 text-slate-400" />
+                  <span>What the numbers mean</span>
+                </summary>
+                <ul className="mt-2 flex flex-col gap-1.5 text-[11px] leading-relaxed text-slate-600">
+                  <li>
+                    <span className="font-semibold text-slate-800">The number on the right</span> is
+                    how many car lots were free at that carpark when the count was last taken.
+                    Motorcycle and heavy-vehicle lots are not included.
+                  </li>
+                  <li>
+                    <span className="font-semibold text-slate-800">FULL</span> means the carpark
+                    reported zero free car lots.{' '}
+                    <span className="font-semibold text-slate-800">Almost full</span> means{' '}
+                    {ALMOST_FULL_LOTS_THRESHOLD} or fewer were left.
+                  </li>
+                  <li>
+                    <span className="font-semibold text-slate-800">LTA, HDB and URA</span> are the
+                    agencies that operate the carpark and supply its count. They are not a rating.
+                  </li>
+                  <li>
+                    <span className="font-semibold text-slate-800">The distance</span> is measured
+                    from the centre of {currentZoneInfo.label}, not from where you are standing.
+                  </li>
+                  <li>
+                    The list is ordered by most free lots first, so a closer carpark with fewer
+                    lots may appear further down.
+                  </li>
+                </ul>
+              </details>
             )}
 
             {/* Dynamic Content Area */}
