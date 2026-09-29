@@ -49,12 +49,18 @@ function haversineDistanceKm(lat1: number, lon1: number, lat2: number, lon2: num
   return R * c;
 }
 
+/**
+ * Distances just under a kilometre used to be rounded to the nearest 50 m and then
+ * labelled in metres, so 997 m was shown as "1000 m" while 1052 m on the next card
+ * was shown as "1.1 km". The rounded value now decides the unit, so a distance is
+ * never displayed as a four-digit number of metres.
+ */
 function formatDistance(meters: number): string {
-  if (meters < 1000) {
-    const rounded = Math.max(50, Math.round(meters / 50) * 50);
-    return `${rounded} m`;
+  const roundedMeters = Math.max(50, Math.round(meters / 50) * 50);
+  if (roundedMeters < 1000) {
+    return `${roundedMeters} m`;
   }
-  return `${(meters / 1000).toFixed(1)} km`;
+  return `${(roundedMeters / 1000).toFixed(1)} km`;
 }
 
 /**
