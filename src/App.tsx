@@ -251,6 +251,20 @@ export default function App() {
               updatedTime={updatedTime}
             />
 
+            {/*
+              The product covers four areas only, but nothing on the page said so. A limit
+              the visitor cannot see is not a scope boundary, it is a mismatch between what
+              the product appears to offer and what it does, so it is stated here in full
+              view rather than inside the collapsed explanation below.
+            */}
+            <p
+              id="coverage-note"
+              className="mb-2.5 text-[11px] leading-relaxed text-slate-500"
+            >
+              ParkSG covers these four areas only. Carparks elsewhere in Singapore are not
+              listed, and the app does not use your location.
+            </p>
+
             {/* Refreshing Indicator while keeping counts visible */}
             {isRefreshing && (
               <div className="mb-2 py-1 px-3 bg-indigo-50/70 border border-indigo-100 rounded-lg flex items-center justify-center gap-2 text-xs font-semibold text-indigo-700 animate-pulse">
