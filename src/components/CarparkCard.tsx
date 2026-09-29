@@ -40,6 +40,7 @@ export const CarparkCard: React.FC<CarparkCardProps> = ({
   onRequestRoute,
 }) => {
   const [navModalOpen, setNavModalOpen] = useState(false);
+  const [routePending, setRoutePending] = useState(false);
 
   // Freshness calculation
   const effectiveTimestamp = carpark.fetchedAt || readingTimestamp;
@@ -94,9 +95,10 @@ export const CarparkCard: React.FC<CarparkCardProps> = ({
 
   const handleRouteClick = (e: React.MouseEvent) => {
     e.stopPropagation();
-    if (onRequestRoute) {
-      onRequestRoute();
-    }
+    if (!onRequestRoute) return;
+    setRoutePending(true);
+    onRequestRoute();
+    window.setTimeout(() => setRoutePending(false), 4000);
   };
 
   const handleSaveClick = (e: React.MouseEvent) => {
@@ -147,16 +149,26 @@ export const CarparkCard: React.FC<CarparkCardProps> = ({
                 <span className="text-slate-400 italic">No GPS coords</span>
               ) : (
                 <div className="flex items-center gap-2">
-                  <button
-                    type="button"
-                    onClick={handleRouteClick}
-                    className="inline-flex items-center gap-1 text-[11px] font-semibold text-indigo-600 hover:text-indigo-800 cursor-pointer"
-                    title="Calculate driving route"
-                  >
-                    <RouteIcon className="w-3 h-3 text-indigo-600" />
-                    <span>Route</span>
-                  </button>
-                  <span>·</span>
+                  {onRequestRoute && (
+                    <>
+                      <button
+                        type="button"
+                        onClick={handleRouteClick}
+                        disabled={routePending}
+                        className="inline-flex items-center gap-1 text-[11px] font-semibold text-indigo-600 hover:text-indigo-800 cursor-pointer disabled:text-slate-400 disabled:cursor-wait"
+                        title="Calculate driving route"
+                        aria-busy={routePending}
+                      >
+                        <RouteIcon
+                          className={`w-3 h-3 ${
+                            routePending ? 'text-slate-400 animate-pulse' : 'text-indigo-600'
+                          }`}
+                        />
+                        <span>{routePending ? 'Finding route…' : 'Route'}</span>
+                      </button>
+                      <span>·</span>
+                    </>
+                  )}
                   <button
                     type="button"
                     onClick={handleNavigateClick}
