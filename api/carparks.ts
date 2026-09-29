@@ -57,6 +57,27 @@ function formatDistance(meters: number): string {
   return `${(meters / 1000).toFixed(1)} km`;
 }
 
+/**
+ * LTA returns some carparks more than once under different CarParkIDs — for example
+ * BLK 14A FARRER PARK ROAD appears as KJM2 with lots available and KJML with zero.
+ * Both copies were being shown, so a carpark with space could be displayed as FULL,
+ * and the two copies carry different coordinates, so the distance could be wrong too.
+ * Collapse records that name the same development, keeping the one reporting lots.
+ */
+function dedupeByDevelopment(records: NormalizedRecord[]): NormalizedRecord[] {
+  const bestByName = new Map<string, NormalizedRecord>();
+
+  for (const record of records) {
+    const key = record.name.trim().toUpperCase().replace(/\s+/g, ' ');
+    const existing = bestByName.get(key);
+    if (!existing || record.lots > existing.lots) {
+      bestByName.set(key, record);
+    }
+  }
+
+  return Array.from(bestByName.values());
+}
+
 async function fetchAllLtaRecords(accountKey: string): Promise<NormalizedRecord[]> {
   const now = Date.now();
   if (cachedRecords && now - lastCacheTime < CACHE_TTL_MS) {
@@ -117,9 +138,11 @@ async function fetchAllLtaRecords(accountKey: string): Promise<NormalizedRecord[
     });
   }
 
-  cachedRecords = normalized;
+  const deduped = dedupeByDevelopment(normalized);
+
+  cachedRecords = deduped;
   lastCacheTime = now;
-  return normalized;
+  return deduped;
 }
 
 export default async function carparksHandler(req: Request, res: Response) {
