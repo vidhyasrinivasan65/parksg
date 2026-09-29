@@ -158,18 +158,35 @@ export default async function carparksHandler(req: Request, res: Response) {
   const queryLng = req.query?.lng ? parseFloat(req.query.lng as string) : null;
   const radiusKm = req.query?.radius ? Math.min(15, Math.max(0.5, parseFloat(req.query.radius as string))) : 2.5;
 
-  let centerLat: number | null = null;
-  let centerLng: number | null = null;
+  const hasCoordinates =
+    queryLat !== null && queryLng !== null && !Number.isNaN(queryLat) && !Number.isNaN(queryLng);
+
+  /**
+   * An unrecognised zone used to fall through to the Orchard default, and the response
+   * was then labelled "Orchard" — so a request for a zone that does not exist came back
+   * as a confident list of Orchard carparks rather than an error. A zone the system does
+   * not know is now refused, and the names it does accept are returned with the refusal.
+   */
+  if (!hasCoordinates && queryZone && !ZONE_CENTRES[queryZone]) {
+    return res.status(400).json({
+      error: `Unknown zone "${queryZone}". No carparks were looked up.`,
+      validZones: Object.keys(ZONE_CENTRES),
+    });
+  }
+
+  let centerLat: number;
+  let centerLng: number;
   let targetZone = queryZone;
 
-  if (queryLat !== null && queryLng !== null && !Number.isNaN(queryLat) && !Number.isNaN(queryLng)) {
-    centerLat = queryLat;
-    centerLng = queryLng;
-  } else if (queryZone && ZONE_CENTRES[queryZone]) {
+  if (hasCoordinates) {
+    centerLat = queryLat as number;
+    centerLng = queryLng as number;
+    targetZone = queryZone && ZONE_CENTRES[queryZone] ? queryZone : 'Custom';
+  } else if (queryZone) {
     centerLat = ZONE_CENTRES[queryZone].lat;
     centerLng = ZONE_CENTRES[queryZone].lng;
   } else {
-    // Default to Orchard if neither is provided
+    // No zone and no coordinates were asked for, so fall back to Orchard
     targetZone = 'Orchard';
     centerLat = ZONE_CENTRES.Orchard.lat;
     centerLng = ZONE_CENTRES.Orchard.lng;
@@ -180,7 +197,7 @@ export default async function carparksHandler(req: Request, res: Response) {
 
     const matched = allRecords
       .map((item) => {
-        const distanceKm = haversineDistanceKm(centerLat!, centerLng!, item.lat, item.lng);
+        const distanceKm = haversineDistanceKm(centerLat, centerLng, item.lat, item.lng);
         const distanceMeters = Math.round(distanceKm * 1000);
         return {
           ...item,
